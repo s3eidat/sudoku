@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Sudoku — Play, Generate and Solve Sudoku Free | S3eidat Tools</title>
+<meta name="description" content="Play Sudoku with pencil marks, undo and redo, hints, error checking and a timer. New puzzles in four difficulty levels, each with exactly one solution, plus a solver that tells you if your puzzle has no solution or many. Free, no ads tracking you.">
+<meta property="og:title" content="Sudoku — play, generate and solve">
+<meta property="og:description" content="Unique-solution puzzles, pencil marks, hints and a solver. Runs 100% in your browser.">
+<link rel="icon" href="kit/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="kit/kit.css">
+<link rel="stylesheet" href="app.css">
+<script src="kit/kit.js"></script>
+<!--s3:seo-->
+<link rel="canonical" href="https://s3eidat.github.io/sudoku/">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d0f12">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="S3eidat Tools">
+<meta property="og:url" content="https://s3eidat.github.io/sudoku/">
+<meta property="og:image" content="https://s3eidat.github.io/sudoku/screenshot.png">
+<meta property="og:image:width" content="1280"><meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sudoku — Play, generate and solve Sudoku">
+<meta name="twitter:description" content="Play, generate and solve Sudoku. Free, private and runs 100% in your browser: no sign-up, no uploads.">
+<meta name="twitter:image" content="https://s3eidat.github.io/sudoku/screenshot.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Sudoku", "url": "https://s3eidat.github.io/sudoku/", "description": "Play, generate and solve Sudoku. Free, private and runs 100% in your browser: no sign-up, no uploads.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "image": "https://s3eidat.github.io/sudoku/screenshot.png", "author": {"@type": "Person", "name": "s3eidat", "url": "https://github.com/s3eidat"}}</script>
+<!--/s3:seo-->
+</head>
+<body data-tool="sudoku">
+<main class="s3-main">
+  <section class="s3-hero">
+    <h1>Sudoku</h1>
+    <p>Fresh puzzles with exactly one solution, pencil marks, hints and undo, or type in a puzzle from a newspaper and let the solver check it.</p>
+  </section>
+
+  <div class="su-layout">
+    <section class="su-board-wrap">
+      <div class="row between su-top">
+        <div class="row su-meta">
+          <span class="chip accent" id="level">Medium</span>
+          <span class="chip" id="timer" aria-label="Time">0:00</span>
+          <span class="chip" id="hintsUsed" hidden></span>
+        </div>
+        <button class="btn ghost small" id="pause" aria-label="Pause"><svg class="i"><use href="#i-pause"/></svg></button>
+      </div>
+      <div class="su-board" id="board" role="grid" aria-label="Sudoku grid" tabindex="0"></div>
+      <div class="su-paused" id="paused" hidden><b>Paused</b><button class="btn primary" id="resume"><svg class="i"><use href="#i-play"/></svg>Resume</button></div>
+      <div class="su-win" id="win" hidden></div>
+    </section>
+
+    <aside class="su-side">
+      <div class="su-pad" id="pad" aria-label="Number pad"></div>
+      <div class="su-tools">
+        <button class="btn" id="undo" title="Undo (Ctrl+Z)"><span aria-hidden="true">↶</span> Undo</button>
+        <button class="btn" id="redo" title="Redo (Ctrl+Y)"><span aria-hidden="true">↷</span> Redo</button>
+        <button class="btn" id="erase" title="Erase (Delete)"><svg class="i"><use href="#i-x"/></svg>Erase</button>
+        <button class="btn" id="pencil" aria-pressed="false" title="Pencil marks (N)">✎ Pencil <kbd>N</kbd></button>
+        <button class="btn" id="hint" title="Fill the selected cell"><svg class="i"><use href="#i-heart"/></svg>Hint</button>
+        <button class="btn" id="autoNotes" title="Fill every empty cell with its candidates">✎ All notes</button>
+      </div>
+      <label class="check"><input type="checkbox" id="checkErr" checked> Show mistakes</label>
+
+      <div class="card stack su-card">
+        <h2>New puzzle</h2>
+        <div class="seg" id="diff" role="group" aria-label="Difficulty">
+          <button aria-pressed="false" data-v="easy">Easy</button>
+          <button aria-pressed="true" data-v="medium">Medium</button>
+          <button aria-pressed="false" data-v="hard">Hard</button>
+          <button aria-pressed="false" data-v="expert">Expert</button>
+        </div>
+        <button class="btn primary" id="new"><svg class="i"><use href="#i-refresh"/></svg>New game</button>
+      </div>
+
+      <div class="card stack su-card">
+        <h2>Solver</h2>
+        <p class="faint su-p" id="solverHint">Clear the grid, type the puzzle's numbers, then solve it or play it.</p>
+        <div class="row">
+          <button class="btn" id="enter">Enter a puzzle</button>
+          <button class="btn" id="solve" hidden>Solve</button>
+          <button class="btn primary" id="playThis" hidden>Play this</button>
+        </div>
+        <label class="field">Or paste 81 digits (0 or . for blanks)
+          <div class="row nowrap">
+            <input class="input mono grow" id="paste" maxlength="200" spellcheck="false" autocomplete="off" placeholder="53..7....6..195....98....6.8...">
+            <button class="btn" id="load">Load</button>
+          </div>
+        </label>
+        <div class="su-msg" id="solverMsg" aria-live="polite"></div>
+      </div>
+      <p class="faint su-keys">Keys: arrows move, 1–9 fill, <kbd>Shift</kbd>+digit pencil, <kbd>N</kbd> pencil mode, <kbd>Del</kbd> erase, <kbd>Ctrl</kbd>+<kbd>Z</kbd>/<kbd>Y</kbd> undo/redo.</p>
+    </aside>
+  </div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

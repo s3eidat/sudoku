@@ -1,0 +1,75 @@
+.su-layout { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 860px) { .su-layout { grid-template-columns: minmax(0, 1fr); } }
+.su-board-wrap { position: relative; }
+.su-top { margin-bottom: 10px; }
+.su-meta { gap: 6px; }
+#timer { font-variant-numeric: tabular-nums; min-width: 56px; justify-content: center; }
+
+.su-board {
+  display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); aspect-ratio: 1; width: 100%;
+  border: 2.5px solid var(--text); border-radius: 12px; overflow: hidden; background: var(--surface); user-select: none; touch-action: manipulation;
+  container-type: inline-size;
+}
+.su-board:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.su-board.blur .su-cell { color: transparent !important; }
+.su-board.blur .su-notes { visibility: hidden; }
+.su-cell {
+  display: grid; place-items: center; border-right: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong);
+  font-size: 6.2cqw; font-weight: 500; color: var(--accent); cursor: pointer; position: relative; font-variant-numeric: tabular-nums;
+  transition: background 80ms;
+}
+.su-cell:nth-child(9n) { border-right: 0; }
+.su-cell:nth-last-child(-n + 9) { border-bottom: 0; }
+.su-cell.br { border-right: 2.5px solid var(--text); }
+.su-cell.bb { border-bottom: 2.5px solid var(--text); }
+.su-cell.given { color: var(--text); font-weight: 700; }
+.su-cell.peer { background: var(--surface-2); }
+.su-cell.same { background: var(--accent-soft); }
+.su-cell.sel { background: color-mix(in srgb, var(--accent) 30%, var(--surface)); }
+.su-cell.wrong { color: var(--danger); background: var(--danger-soft); }
+.su-cell.wrong.sel { background: color-mix(in srgb, var(--danger) 25%, var(--surface)); }
+.su-notes { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; padding: 2px; }
+.su-notes span { display: grid; place-items: center; font-size: 2.2cqw; font-weight: 600; color: var(--text-2); line-height: 1; }
+.su-notes span.hl { color: var(--accent); background: var(--accent-soft); border-radius: 3px; }
+
+.su-paused, .su-win {
+  position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 10px; padding: 22px 30px;
+  border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-pop); text-align: center; z-index: 2;
+}
+.su-paused b, .su-win b { font-size: 26px; letter-spacing: -.02em; }
+.su-win b { color: var(--accent); }
+.su-win span { color: var(--text-2); font-variant-numeric: tabular-nums; }
+.su-win { animation: s3-pop 360ms var(--ease-spring); }
+
+.su-side { display: grid; gap: 14px; }
+.su-pad { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px; }
+@media (min-width: 861px) { .su-pad { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 330px; } .su-key { height: 64px !important; } }
+.su-key { position: relative; height: 54px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); color: var(--text); transition: background 120ms, transform 80ms; }
+.su-key:hover { background: var(--surface-3); }
+.su-key:active { transform: scale(.95); }
+.su-key b { font-size: 24px; font-weight: 650; }
+.su-key small { position: absolute; top: 4px; right: 7px; font-size: 10.5px; color: var(--text-3); font-weight: 600; }
+.su-key.done { opacity: .35; }
+.su-tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; max-width: 420px; }
+.su-tools .btn { padding: 0 8px; }
+#pencil[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+#pencil kbd { padding: 2px 4px; font-size: 10px; }
+.su-card { padding: 14px; }
+.su-card h2 { margin: 0; }
+.su-p { margin: 0; }
+.row.nowrap { flex-wrap: nowrap; }
+.su-msg { font-size: 13px; color: var(--text-2); }
+.su-msg:empty { display: none; }
+.su-msg.ok { color: var(--ok); }
+.su-msg.warn { color: var(--warn); }
+.su-msg.bad { color: var(--danger); }
+.su-keys { margin: 0; line-height: 1.9; }
+@media (max-width: 560px) {
+  .su-pad { gap: 4px; }
+  .su-key { height: 48px; border-radius: 9px; }
+  .su-key b { font-size: 20px; }
+  .su-key small { font-size: 9px; top: 2px; right: 4px; }
+  .su-tools { max-width: none; }
+  .su-tools .btn { font-size: 12px; }
+  .su-keys { display: none; }
+}
